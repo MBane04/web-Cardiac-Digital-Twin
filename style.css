@@ -88,8 +88,13 @@ nav a {
     display: block;
     color: white;
     text-decoration: none;
-    padding: 15px 20px;
+    padding: 15px 25px;
     transition: background-color 0.3s;
+    font-weight: 600;
+}
+
+nav a:first-child i {
+    margin-right: 6px;
 }
 
 nav a:hover {
@@ -102,12 +107,13 @@ nav a:hover {
     color: white;
     font-size: 1em;
     cursor: pointer;
-    padding: 15px 20px;
+    padding: 15px 25px;
     transition: background-color 0.3s;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     white-space: nowrap;
+    line-height: 1.6;
 }
 
 .dark-mode-btn:hover {
@@ -1344,31 +1350,61 @@ footer a:hover {
         justify-content: center;
     }
 
+    nav {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    nav ul {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background-color: #333;
+        flex-direction: column;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        width: 100%;
+    }
+
+    nav ul li { width: 100%; }
+
+    nav ul.active {
+        max-height: 500px;
+    }
+
     .nav-toggle {
-        display: block;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
         background: none;
         border: none;
         color: white;
         font-size: 1.5em;
         cursor: pointer;
-        padding: 10px 20px;
+        padding: 15px 20px;
+        margin-left: auto;
     }
 
-    nav ul {
-        display: none;
-        flex-direction: column;
-        width: 100%;
-        background-color: #222;
+    nav a {
+        padding: 12px 25px;
+        font-size: 0.95em;
+        border-bottom: 1px solid #555;
     }
 
-    nav ul.active {
-        display: flex;
-    }
-
-    nav a,
     .dark-mode-btn {
-        padding: 12px 20px;
-        border-bottom: 1px solid #444;
+        padding: 12px 25px;
+        order: 3;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px;
+        text-align: left;
+        border-bottom: 1px solid #555;
     }
 
     section {

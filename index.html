@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Left Atrium Interactive Model - N-body Cardiac Simulation</title>
+    <title>Cardiac Digital Twin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -24,6 +24,7 @@
     <nav>
         <button id="nav-toggle" class="nav-toggle" title="Toggle menu"><i class="fas fa-bars"></i></button>
         <ul>
+            <li><a href="https://mbane04.github.io" target="_blank"><i class="fas fa-arrow-left"></i> Portfolio</a></li>
             <li><a href="#overview"><i class="fas fa-info-circle"></i> Overview</a></li>
             <li><a href="#clinical"><i class="fas fa-heartbeat"></i> Clinical Background</a></li>
             <li><a href="#model"><i class="fas fa-cube"></i> Model Design</a></li>
@@ -69,7 +70,7 @@
                     <li><strong>Programming:</strong> C++ with CUDA for GPU-accelerated parallel computing</li>
                     <li><strong>Graphics:</strong> OpenGL 3D rendering with ImGui interface and GLFW windowing</li>
                     <li><strong>Interactive Features:</strong> Real-time ablation tools, ectopic beat triggering, parameter adjustment during simulation</li>
-                    <li><strong>Visualization:</strong> Multiple camera angles, voltage color mapping, video recording, screenshot capture</li>
+                    <li><strong>Visualization:</strong> Multiple camera angles, Color coded contraction phases, video recording, screenshot capture</li>
                     <li><strong>Model Flexibility:</strong> Supports simple 1D strands to complex 13,000+ node patient-specific anatomies</li>
                     <li><strong>Open Source:</strong> Freely available on GitHub for research and educational use</li>
                 </ul>
@@ -125,7 +126,7 @@
 
                 <div class="progression-item">
                     <div class="progression-info">
-                        <h3>2D Ring (200–40,000 nodes)</h3>
+                        <h3>2D Ring (24–200 nodes)</h3>
                         <p>Demonstrated macro-reentrant circuits and reentry tachycardia. Tests boundary conditions and circular wave propagation.</p>
                     </div>
                     <figure class="progression-figure clickable">
@@ -198,7 +199,7 @@
         <section id="features">
             <h2><i class="fas fa-laptop"></i> Interactive Features</h2>
 
-            <p style="margin-bottom:18px;">Interactive GUI sits at the core: quickly pace, trigger ectopics, and apply ablations during live simulation without digging through menus. Click the image to view at full size.</p>
+            <p style="margin-bottom:18px;">The interactive GUI lets you trigger single ectopic events, schedule recurring ectopic beats, perform virtual ablations, and adjust beat period and visualization—all in real time without digging through menus.</p>
             <figure class="feature-figure" id="gui-figure-modal" style="margin-bottom:30px;">
                 <img src="assets/GUI.png" alt="Simulation GUI preview" class="clickable" loading="lazy">
                 <figcaption>Click to view full-size interface for live control; sections below describe each capability.</figcaption>
@@ -220,7 +221,7 @@
                     <h3><i class="fas fa-sliders-h"></i> Visualization & Control</h3>
                     <ul>
                         <li><strong>3D Rotation & Zoom:</strong> Freely rotate and inspect geometry</li>
-                        <li><strong>Node Coloring:</strong> Voltage gradient visualization</li>
+                        <li><strong>Node Coloring:</strong> Toggle Color coded contraction phases </li>
                         <li><strong>Draw Front Half:</strong> Render only near half for clarity</li>
                         <li><strong>Recording:</strong> Capture simulation videos for analysis</li>
                         <li><strong>Beat Period Control:</strong> Adjust heart rate (millisecond precision)</li>
