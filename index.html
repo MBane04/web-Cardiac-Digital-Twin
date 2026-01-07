@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Left Atrium Interactive Model - N-body Cardiac Simulation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Left Atrium Interactive Model</h1>
+        <p>N-Body Digital Twin for Cardiac Arrhythmia Simulation & Interactive Ablation Training</p>
+        <div class="header-links">
+            <a href="https://github.com/TSUParticleModelingGroup/New-Left-Atrium-Model" target="_blank" class="header-btn">
+                <i class="fab fa-github"></i> GitHub Repository
+            </a>
+            <a href="https://doi.org/10.1016/j.jelectrocard.2024.153762" target="_blank" class="header-btn">
+                <i class="fas fa-file-pdf"></i> Published Paper
+            </a>
+        </div>
+    </header>
+
+    <nav>
+        <button id="nav-toggle" class="nav-toggle" title="Toggle menu"><i class="fas fa-bars"></i></button>
+        <ul>
+            <li><a href="#overview"><i class="fas fa-info-circle"></i> Overview</a></li>
+            <li><a href="#clinical"><i class="fas fa-heartbeat"></i> Clinical Background</a></li>
+            <li><a href="#model"><i class="fas fa-cube"></i> Model Design</a></li>
+            <li><a href="#results"><i class="fas fa-chart-line"></i> Results</a></li>
+            <li><a href="#features"><i class="fas fa-laptop"></i> Features</a></li>
+            <li><a href="#team"><i class="fas fa-users"></i> Team</a></li>
+            <li><button id="dark-mode-toggle" class="dark-mode-btn" title="Toggle dark mode">
+                <i class="fas fa-moon"></i><span class="mode-label">Dark</span>
+            </button></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Overview Section -->
+        <section id="overview">
+            <h2><i class="fas fa-info-circle"></i> Project Overview</h2>
+            <p>The Interactive Left Atrium Model is a GPU-accelerated N-body computational simulation that enables real-time, interactive exploration of cardiac arrhythmias. Implemented in CUDA C++ with OpenGL visualization, this project combines physics-based cardiac muscle modeling with interactive ablation capabilities for both research and medical education.</p>
+            
+            <p style="margin-top: 15px;"><strong>Published:</strong> Journal of Electrocardiology, Volume 86 (2024), Article 153762 | <strong>DOI:</strong> 10.1016/j.jelectrocard.2024.153762</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-gpu"></i>
+                    <h3>GPU-Accelerated</h3>
+                    <p>CUDA implementation on NVIDIA GPUs (Dual RTX A6000) for real-time interactive simulation of thousands of cardiac myocytes</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mouse"></i>
+                    <h3>Interactive Control</h3>
+                    <p>Real-time ablation, pacing adjustments, and ectopic beat induction during simulation execution</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-cube"></i>
+                    <h3>Multidimensional Models</h3>
+                    <p>Validated progression from 1D strands to patient-specific 3D geometries from medical imaging</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-stethoscope"></i>
+                    <h3>Clinically Relevant</h3>
+                    <p>Reproduces real arrhythmias (micro-reentry, flutter, SVT) and demonstrates ablation effectiveness</p>
+                </div>
+            </div>
+
+            <div class="specs-box">
+                <h3>Quick Facts</h3>
+                <ul>
+                    <li><strong>Technology Stack:</strong> CUDA C++, OpenGL, Blender (Python BPY API)</li>
+                    <li><strong>Hardware:</strong> Dual NVIDIA RTX A6000 GPUs (48GB GDDR6 each)</li>
+                    <li><strong>Model Size:</strong> 11 nodes (1D) to 13,000+ nodes (anatomical LA)</li>
+                    <li><strong>Numerical Method:</strong> Leap-frog integration with millisecond-scale timesteps</li>
+                    <li><strong>Visualization:</strong> Real-time 3D rendering with node coloring, voltage mapping, recording</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Clinical Background -->
+        <section id="clinical">
+            <h2><i class="fas fa-heartbeat"></i> Clinical Background</h2>
+            
+            <div class="clinical-grid">
+                <div class="clinical-card">
+                    <h3><i class="fas fa-heart"></i> Cardiac Arrhythmias</h3>
+                    <p>Irregular heartbeats affect millions worldwide and are leading contributors to stroke and heart failure. The left atrium is the primary site of complex arrhythmias, particularly atrial fibrillation (AF) and supraventricular tachycardia (SVT).</p>
+                </div>
+                <div class="clinical-card">
+                    <h3><i class="fas fa-syringe"></i> Current Treatment</h3>
+                    <p>Catheter ablation is the gold standard intervention, but success rates vary widely (70-80%). Procedural planning relies heavily on operator experience rather than patient-specific computational modeling.</p>
+                </div>
+                <div class="clinical-card">
+                    <h3><i class="fas fa-brain"></i> Our Solution</h3>
+                    <p>An interactive digital twin enables researchers and clinicians to understand arrhythmia mechanisms, test ablation strategies, and plan procedures without patient risk—all in real time.</p>
+                </div>
+            </div>
+
+            <div class="physiology-box">
+                <h3><i class="fas fa-microscope"></i> Cardiac Muscle Physiology</h3>
+                <p><strong>Key Distinction:</strong> Unlike skeletal muscle (1–2 ms refractory period), cardiac muscle requires 250–300 ms to recover. This long refractory period is essential: without it, sustained contraction would stop the heart. Our model accurately represents this critical physiological constraint.</p>
+                
+                <div class="param-table">
+                    <div class="param-row">
+                        <div class="param-label">Contraction Duration</div>
+                        <div class="param-value">200 ms</div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">Recharge Duration</div>
+                        <div class="param-value">200 ms</div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">Total Cycle Length</div>
+                        <div class="param-value">400 ms</div>
+                    </div>
+                    <div class="param-row">
+                        <div class="param-label">Conduction Velocity</div>
+                        <div class="param-value">0.4 m/s</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Design -->
+        <section id="model">
+            <h2><i class="fas fa-cube"></i> Model Architecture & Validation</h2>
+            
+            <p>The model was systematically validated through dimensional progression, starting with simple geometries and advancing to anatomically accurate structures:</p>
+
+            <div class="stage-cards">
+                <div class="stage-card">
+                    <div class="stage-number">1</div>
+                    <h4>1D Strand (11 nodes)</h4>
+                    <p>Validated electrical wavefront propagation and conduction blockage</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-number">2</div>
+                    <h4>2D Ring (200–40,000 nodes)</h4>
+                    <p>Demonstrated macro-reentrant circuits and reentry tachycardia</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-number">3</div>
+                    <h4>3D Sphere (340–5,680 nodes)</h4>
+                    <p>Stable 3D spiral wave dynamics and multidirectional propagation</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-number">4</div>
+                    <h4>Idealized LA (13,000 nodes)</h4>
+                    <p>Anatomical features: pulmonary veins, mitral valve, Bachmann's bundle</p>
+                </div>
+                <div class="stage-card">
+                    <div class="stage-number">5</div>
+                    <h4>Patient-Specific</h4>
+                    <p>Real left atrial geometries from medical imaging (CTA, MRI)</p>
+                </div>
+            </div>
+
+            <div class="architecture-box">
+                <h3><i class="fas fa-cog"></i> Technical Architecture</h3>
+                <p><strong>Mass-Spring System:</strong> Nodes represent cardiac myocytes; connectors transmit electrical signals with physiologically accurate refractory periods. Node mass is derived from connector properties: TM / (2 × TCL) × Σ(CL). Contractile strength follows: SR × CM (stimulus response × muscle properties).</p>
+                
+                <p style="margin-top: 15px;"><strong>GPU Pipeline:</strong></p>
+                <ul style="margin-top: 10px;">
+                    <li>cudaMalloc() → GPU memory allocation and setup</li>
+                    <li>getForces() → Calculate repulsion/attraction forces</li>
+                    <li>updateNodes() → Apply physics; advance positions</li>
+                    <li>updateMuscles() → Propagate electrical signals; manage refractory states</li>
+                    <li>memCopy() → Transfer results back to CPU for rendering</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results">
+            <h2><i class="fas fa-chart-line"></i> Research Results</h2>
+            
+            <p>The model successfully reproduces clinically-observed arrhythmias and validates therapeutic interventions:</p>
+
+            <div class="results-grid">
+                <div class="result-card">
+                    <h3><i class="fas fa-sync-alt"></i> Micro-Reentry</h3>
+                    <p>Small re-entrant circuits (wavelength 30–50 mm) induced through programmed pacing protocols. Successfully terminated via virtual ablation, demonstrating causal role of reentry in arrhythmia maintenance.</p>
+                </div>
+                <div class="result-card">
+                    <h3><i class="fas fa-wave-square"></i> Atrial Flutter</h3>
+                    <p>Reentrant tachycardia (240–300 bpm) between pulmonary veins reproduced in anatomical models. Shows how anatomical constraints create stable reentry pathways matching clinical observations.</p>
+                </div>
+                <div class="result-card">
+                    <h3><i class="fas fa-heart"></i> Ectopic Activity</h3>
+                    <p>Focal beats induced through continuous pacing. Demonstrates both sinus tachycardia (normal 1:1 conduction) and pathological reentrant scenarios with AV block patterns.</p>
+                </div>
+                <div class="result-card">
+                    <h3><i class="fas fa-syringe"></i> Virtual Ablation</h3>
+                    <p>Interactive ablation achieves 100% success on induced micro-reentry and variable success on anatomically-driven flutter—reflecting real clinical procedural outcomes.</p>
+                </div>
+            </div>
+
+            <div class="validation-box">
+                <h3><i class="fas fa-check-circle"></i> Validation Metrics</h3>
+                <p><strong>Wavelength Formula:</strong> Conduction velocity (0.4 m/s) × Total cycle length (400 ms) = 160 mm minimum reentry path size.</p>
+                <p style="margin-top: 10px;"><strong>Refractory Period:</strong> 400 ms total (200 ms contraction + 200 ms repolarization) ensures physiologically accurate arrhythmia vulnerability windows and prevents unrealistic rapid firing.</p>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features">
+            <h2><i class="fas fa-laptop"></i> Interactive Features</h2>
+            
+            <div class="features-list">
+                <div class="feature-group">
+                    <h3><i class="fas fa-crosshairs"></i> Mouse-Based Interventions</h3>
+                    <ul>
+                        <li><strong>Ablate:</strong> Block electrical conduction in selected regions</li>
+                        <li><strong>Ectopic Trigger:</strong> Initiate single beats from chosen locations</li>
+                        <li><strong>Ectopic Beat:</strong> Create recurrent pacing from specific nodes</li>
+                        <li><strong>Adjust Area:</strong> Modify muscle contractile properties in real time</li>
+                        <li><strong>Identify Node:</strong> Query individual node IDs and states</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-group">
+                    <h3><i class="fas fa-sliders-h"></i> Visualization & Control</h3>
+                    <ul>
+                        <li><strong>3D Rotation & Zoom:</strong> Freely rotate and inspect geometry</li>
+                        <li><strong>Node Coloring:</strong> Voltage gradient visualization</li>
+                        <li><strong>Draw Front Half:</strong> Render only near half for clarity</li>
+                        <li><strong>Recording:</strong> Capture simulation videos for analysis</li>
+                        <li><strong>Beat Period Control:</strong> Adjust heart rate (millisecond precision)</li>
+                        <li><strong>Simulation Speed:</strong> Adjust computational rate independent of display</li>
+                    </ul>
+                </div>
+
+                <div class="feature-group">
+                    <h3><i class="fas fa-save"></i> Data Management</h3>
+                    <ul>
+                        <li><strong>Save/Load State:</strong> Persist and restore complete simulation configurations</li>
+                        <li><strong>Export Settings:</strong> Save parameters for reproducible experiments</li>
+                        <li><strong>Import Configuration:</strong> Load pre-defined model setups</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team">
+            <h2><i class="fas fa-users"></i> Research Team & Collaborators</h2>
+            
+            <div class="team-grid">
+                <div class="team-box">
+                    <h3>Principal Investigator</h3>
+                    <p><strong>Bryant Wyatt</strong><br>Tarleton State University<br>Department of Mathematics</p>
+                </div>
+                
+                <div class="team-box">
+                    <h3>Development Team</h3>
+                    <ul>
+                        <li>Avery Campbell</li>
+                        <li>Gavin McIntosh</li>
+                        <li>Leah Rogers</li>
+                        <li>Melanie Little</li>
+                        <li>Brandon Wyatt</li>
+                    </ul>
+                </div>
+
+                <div class="team-box">
+                    <h3>Clinical Collaborators</h3>
+                    <ul>
+                        <li><strong>Dr. Charles Puelz</strong><br>Baylor College of Medicine</li>
+                        <li><strong>Phil Alcorn</strong><br>Biosense Webster (EP Solutions)</li>
+                        <li><strong>Kyla Moore</strong><br>University of Houston, Mathematics</li>
+                    </ul>
+                </div>
+
+                <div class="team-box">
+                    <h3>Funding & Support</h3>
+                    <ul>
+                        <li><strong>NIH Grant:</strong> #1R15HL179671-01</li>
+                        <li><strong>NVIDIA:</strong> Applied Research Accelerator Program</li>
+                        <li><strong>Tarleton State University:</strong> Presidential Excellence in Research</li>
+                        <li><strong>Bill & Winnie Wyatt Foundation</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="awards-box">
+                <h3><i class="fas fa-trophy"></i> Recognition</h3>
+                <div class="award-list">
+                    <div class="award-item">
+                        <span class="award-badge">NVIDIA GTC 2026</span>
+                        <p>Accepted Poster Presentation</p>
+                    </div>
+                    <div class="award-item">
+                        <span class="award-badge">SIAM Texas/Louisiana 2025</span>
+                        <p>1st Place Poster</p>
+                    </div>
+                    <div class="award-item">
+                        <span class="award-badge">Tarleton REID 2025</span>
+                        <p>1st Place Undergraduate Poster</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Publication Section -->
+        <section id="publication">
+            <h2><i class="fas fa-book"></i> Publication</h2>
+            
+            <div class="pub-card">
+                <h3>Simulating left atrial arrhythmias with an interactive N-body model</h3>
+                <p class="pub-authors">Wyatt B, McIntosh G, Campbell A, Little M, Rogers L, Wyatt B</p>
+                <p class="pub-journal"><em>Journal of Electrocardiology</em>, 86 (2024), 153762</p>
+                <p class="pub-date">Published: July 22, 2024 | Open Access</p>
+                <div class="pub-links">
+                    <a href="https://doi.org/10.1016/j.jelectrocard.2024.153762" target="_blank" class="pub-link">
+                        <i class="fas fa-external-link-alt"></i> Read Full Paper (DOI)
+                    </a>
+                    <a href="https://github.com/TSUParticleModelingGroup/New-Left-Atrium-Model" target="_blank" class="pub-link">
+                        <i class="fab fa-github"></i> Code Repository
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 TSU Particle Modeling Group | <a href="https://github.com/TSUParticleModelingGroup/New-Left-Atrium-Model" target="_blank">GitHub</a></p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
