@@ -30,6 +30,7 @@
             <li><a href="#results"><i class="fas fa-chart-line"></i> Results</a></li>
             <li><a href="#features"><i class="fas fa-laptop"></i> Features</a></li>
             <li><a href="#team"><i class="fas fa-users"></i> Team</a></li>
+            <li><a href="#gallery"><i class="fas fa-images"></i> Gallery</a></li>
             <li><button id="dark-mode-toggle" class="dark-mode-btn" title="Toggle dark mode">
                 <i class="fas fa-moon"></i><span class="mode-label">Dark</span>
             </button></li>
@@ -46,14 +47,9 @@
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <i class="fas fa-gpu"></i>
+                    <i class="fas fa-microchip"></i>
                     <h3>GPU-Accelerated</h3>
                     <p>CUDA implementation on NVIDIA GPUs (Dual RTX A6000) for real-time interactive simulation of thousands of cardiac myocytes</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-mouse"></i>
-                    <h3>Interactive Control</h3>
-                    <p>Real-time ablation, pacing adjustments, and ectopic beat induction during simulation execution</p>
                 </div>
                 <div class="feature-card">
                     <i class="fas fa-cube"></i>
@@ -70,11 +66,12 @@
             <div class="specs-box">
                 <h3>Quick Facts</h3>
                 <ul>
-                    <li><strong>Technology Stack:</strong> CUDA C++, OpenGL, Blender (Python BPY API)</li>
-                    <li><strong>Hardware:</strong> Dual NVIDIA RTX A6000 GPUs (48GB GDDR6 each)</li>
-                    <li><strong>Model Size:</strong> 11 nodes (1D) to 13,000+ nodes (anatomical LA)</li>
-                    <li><strong>Numerical Method:</strong> Leap-frog integration with millisecond-scale timesteps</li>
-                    <li><strong>Visualization:</strong> Real-time 3D rendering with node coloring, voltage mapping, recording</li>
+                    <li><strong>Programming:</strong> C++ with CUDA for GPU-accelerated parallel computing</li>
+                    <li><strong>Graphics:</strong> OpenGL 3D rendering with ImGui interface and GLFW windowing</li>
+                    <li><strong>Interactive Features:</strong> Real-time ablation tools, ectopic beat triggering, parameter adjustment during simulation</li>
+                    <li><strong>Visualization:</strong> Multiple camera angles, voltage color mapping, video recording, screenshot capture</li>
+                    <li><strong>Model Flexibility:</strong> Supports simple 1D strands to complex 13,000+ node patient-specific anatomies</li>
+                    <li><strong>Open Source:</strong> Freely available on GitHub for research and educational use</li>
                 </ul>
             </div>
         </section>
@@ -100,26 +97,7 @@
 
             <div class="physiology-box">
                 <h3><i class="fas fa-microscope"></i> Cardiac Muscle Physiology</h3>
-                <p><strong>Key Distinction:</strong> Unlike skeletal muscle (1–2 ms refractory period), cardiac muscle requires 250–300 ms to recover. This long refractory period is essential: without it, sustained contraction would stop the heart. Our model accurately represents this critical physiological constraint.</p>
-                
-                <div class="param-table">
-                    <div class="param-row">
-                        <div class="param-label">Contraction Duration</div>
-                        <div class="param-value">200 ms</div>
-                    </div>
-                    <div class="param-row">
-                        <div class="param-label">Recharge Duration</div>
-                        <div class="param-value">200 ms</div>
-                    </div>
-                    <div class="param-row">
-                        <div class="param-label">Total Cycle Length</div>
-                        <div class="param-value">400 ms</div>
-                    </div>
-                    <div class="param-row">
-                        <div class="param-label">Conduction Velocity</div>
-                        <div class="param-value">0.4 m/s</div>
-                    </div>
-                </div>
+                <p>Cardiac muscle has a unique property that distinguishes it from other muscle types: a long refractory period. This means that once the heart muscle contracts, it must wait before it can contract again. This built-in delay is essential for proper heart function, ensuring that the heart chambers fill with blood between beats. Our model simulates this critical physiological behavior, allowing researchers to study how disruptions in this timing can lead to arrhythmias.</p>
             </div>
         </section>
 
@@ -127,48 +105,63 @@
         <section id="model">
             <h2><i class="fas fa-cube"></i> Model Architecture & Validation</h2>
             
-            <p>The model was systematically validated through dimensional progression, starting with simple geometries and advancing to anatomically accurate structures:</p>
-
-            <div class="stage-cards">
-                <div class="stage-card">
-                    <div class="stage-number">1</div>
-                    <h4>1D Strand (11 nodes)</h4>
-                    <p>Validated electrical wavefront propagation and conduction blockage</p>
-                </div>
-                <div class="stage-card">
-                    <div class="stage-number">2</div>
-                    <h4>2D Ring (200–40,000 nodes)</h4>
-                    <p>Demonstrated macro-reentrant circuits and reentry tachycardia</p>
-                </div>
-                <div class="stage-card">
-                    <div class="stage-number">3</div>
-                    <h4>3D Sphere (340–5,680 nodes)</h4>
-                    <p>Stable 3D spiral wave dynamics and multidirectional propagation</p>
-                </div>
-                <div class="stage-card">
-                    <div class="stage-number">4</div>
-                    <h4>Idealized LA (13,000 nodes)</h4>
-                    <p>Anatomical features: pulmonary veins, mitral valve, Bachmann's bundle</p>
-                </div>
-                <div class="stage-card">
-                    <div class="stage-number">5</div>
-                    <h4>Patient-Specific</h4>
-                    <p>Real left atrial geometries from medical imaging (CTA, MRI)</p>
-                </div>
-            </div>
-
             <div class="architecture-box">
                 <h3><i class="fas fa-cog"></i> Technical Architecture</h3>
-                <p><strong>Mass-Spring System:</strong> Nodes represent cardiac myocytes; connectors transmit electrical signals with physiologically accurate refractory periods. Node mass is derived from connector properties: TM / (2 × TCL) × Σ(CL). Contractile strength follows: SR × CM (stimulus response × muscle properties).</p>
-                
-                <p style="margin-top: 15px;"><strong>GPU Pipeline:</strong></p>
-                <ul style="margin-top: 10px;">
-                    <li>cudaMalloc() → GPU memory allocation and setup</li>
-                    <li>getForces() → Calculate repulsion/attraction forces</li>
-                    <li>updateNodes() → Apply physics; advance positions</li>
-                    <li>updateMuscles() → Propagate electrical signals; manage refractory states</li>
-                    <li>memCopy() → Transfer results back to CPU for rendering</li>
-                </ul>
+                <p>Our model uses an N-body simulation approach where individual nodes represent cardiac muscle cells (myocytes) connected by virtual muscle fibers. These connections allow electrical signals to propagate through the tissue, mimicking how real heart muscle conducts impulses. The model captures both electrical activation and mechanical contraction, enabling users to observe and manipulate cardiac behavior in real-time. This interactive framework makes it possible to induce arrhythmias and test virtual ablation strategies.</p>
+            </div>
+
+            <p style="margin-top: 25px;">The model was systematically validated through dimensional progression, starting with simple geometries and advancing to anatomically accurate structures:</p>
+
+            <div class="progression-stack" id="model-progression-modal">
+                <div class="progression-item">
+                    <div class="progression-info">
+                        <h3>1D Strand (11 nodes)</h3>
+                        <p>Validated electrical wavefront propagation and conduction blockage. The fundamental unit for testing signal transmission.</p>
+                    </div>
+                    <figure class="progression-figure clickable">
+                        <img src="assets/1DStrand.jpg" alt="1D Strand" loading="lazy">
+                    </figure>
+                </div>
+
+                <div class="progression-item">
+                    <div class="progression-info">
+                        <h3>2D Ring (200–40,000 nodes)</h3>
+                        <p>Demonstrated macro-reentrant circuits and reentry tachycardia. Tests boundary conditions and circular wave propagation.</p>
+                    </div>
+                    <figure class="progression-figure clickable">
+                        <img src="assets/2DRingBeat.jpg" alt="2D Ring" loading="lazy">
+                    </figure>
+                </div>
+
+                <div class="progression-item">
+                    <div class="progression-info">
+                        <h3>3D Sphere (340–5,680 nodes)</h3>
+                        <p>Stable 3D spiral wave dynamics and multidirectional propagation. Validates 3D behavior before anatomical complexity.</p>
+                    </div>
+                    <figure class="progression-figure clickable">
+                        <img src="assets/3DSphereBeat.jpg" alt="3D Sphere" loading="lazy">
+                    </figure>
+                </div>
+
+                <div class="progression-item">
+                    <div class="progression-info">
+                        <h3>Idealized LA (13,000 nodes)</h3>
+                        <p>Anatomical features: pulmonary veins, mitral valve, Bachmann's bundle. Tests realistic geometry before patient data.</p>
+                    </div>
+                    <figure class="progression-figure clickable">
+                        <img src="assets/Idealizedgroup.jpg" alt="Idealized Left Atrium" loading="lazy">
+                    </figure>
+                </div>
+
+                <div class="progression-item">
+                    <div class="progression-info">
+                        <h3>Patient-Specific LA</h3>
+                        <p>Real left atrial geometries from medical imaging (CTA, MRI). Clinically relevant models for arrhythmia reproduction and ablation planning.</p>
+                    </div>
+                    <figure class="progression-figure clickable">
+                        <img src="assets/RealLA.jpg" alt="Patient-Specific Left Atrium" loading="lazy">
+                    </figure>
+                </div>
             </div>
         </section>
 
@@ -176,38 +169,41 @@
         <section id="results">
             <h2><i class="fas fa-chart-line"></i> Research Results</h2>
             
-            <p>The model successfully reproduces clinically-observed arrhythmias and validates therapeutic interventions:</p>
+            <p>The digital twin successfully reproduced multiple clinically relevant arrhythmia mechanisms observed in patients. By adjusting conduction velocities and applying precisely timed ectopic events, we induced various forms of reentrant activity including micro-reentry, macro-reentry, and atrial flutter. These arrhythmias demonstrated self-sustaining propagation patterns consistent with clinical observations.</p>
 
             <div class="results-grid">
                 <div class="result-card">
-                    <h3><i class="fas fa-sync-alt"></i> Micro-Reentry</h3>
-                    <p>Small re-entrant circuits (wavelength 30–50 mm) induced through programmed pacing protocols. Successfully terminated via virtual ablation, demonstrating causal role of reentry in arrhythmia maintenance.</p>
-                </div>
-                <div class="result-card">
-                    <h3><i class="fas fa-wave-square"></i> Atrial Flutter</h3>
-                    <p>Reentrant tachycardia (240–300 bpm) between pulmonary veins reproduced in anatomical models. Shows how anatomical constraints create stable reentry pathways matching clinical observations.</p>
-                </div>
-                <div class="result-card">
-                    <h3><i class="fas fa-heart"></i> Ectopic Activity</h3>
-                    <p>Focal beats induced through continuous pacing. Demonstrates both sinus tachycardia (normal 1:1 conduction) and pathological reentrant scenarios with AV block patterns.</p>
+                    <h3><i class="fas fa-sync-alt"></i> Arrhythmia Induction</h3>
+                    <p>We successfully induced left atrial flutter by slowing conduction velocity between pulmonary vein openings and triggering ectopic events at specific locations and times. Reentrant circuits and rotors emerged naturally, producing sustained activation patterns that resembled those seen in real patients.</p>
                 </div>
                 <div class="result-card">
                     <h3><i class="fas fa-syringe"></i> Virtual Ablation</h3>
-                    <p>Interactive ablation achieves 100% success on induced micro-reentry and variable success on anatomically-driven flutter—reflecting real clinical procedural outcomes.</p>
+                    <p>Simulated catheter ablation reliably terminated reentrant activity and restored organized conduction patterns. We successfully eliminated induced flutters using virtual ablations, allowing the system to return to normal rhythm. The model demonstrated effectiveness on both idealized and patient-specific atrial geometries.</p>
                 </div>
             </div>
 
-            <div class="validation-box">
-                <h3><i class="fas fa-check-circle"></i> Validation Metrics</h3>
-                <p><strong>Wavelength Formula:</strong> Conduction velocity (0.4 m/s) × Total cycle length (400 ms) = 160 mm minimum reentry path size.</p>
-                <p style="margin-top: 10px;"><strong>Refractory Period:</strong> 400 ms total (200 ms contraction + 200 ms repolarization) ensures physiologically accurate arrhythmia vulnerability windows and prevents unrealistic rapid firing.</p>
+            <div class="results-video-stack" id="results-video-modal">
+                <figure class="results-video-figure clickable">
+                    <video src="assets/IdealizedFlutter.mp4" controls preload="metadata" loading="lazy"></video>
+                    <figcaption>Idealized Atrial Flutter - Macro-reentry in the idealized geometry</figcaption>
+                </figure>
+                <figure class="results-video-figure clickable">
+                    <video src="assets/RealLA.mp4" controls preload="metadata" loading="lazy"></video>
+                    <figcaption>Patient-Specific LA - Real geometry under pacing and arrhythmia induction</figcaption>
+                </figure>
             </div>
         </section>
 
         <!-- Features Section -->
         <section id="features">
             <h2><i class="fas fa-laptop"></i> Interactive Features</h2>
-            
+
+            <p style="margin-bottom:18px;">Interactive GUI sits at the core: quickly pace, trigger ectopics, and apply ablations during live simulation without digging through menus. Click the image to view at full size.</p>
+            <figure class="feature-figure" id="gui-figure-modal" style="margin-bottom:30px;">
+                <img src="assets/GUI.png" alt="Simulation GUI preview" class="clickable" loading="lazy">
+                <figcaption>Click to view full-size interface for live control; sections below describe each capability.</figcaption>
+            </figure>
+
             <div class="features-list">
                 <div class="feature-group">
                     <h3><i class="fas fa-crosshairs"></i> Mouse-Based Interventions</h3>
@@ -245,32 +241,47 @@
 
         <!-- Team Section -->
         <section id="team">
-            <h2><i class="fas fa-users"></i> Research Team & Collaborators</h2>
-            
+            <h2><i class="fas fa-users"></i> Research Team</h2>
+
             <div class="team-grid">
                 <div class="team-box">
-                    <h3>Principal Investigator</h3>
-                    <p><strong>Bryant Wyatt</strong><br>Tarleton State University<br>Department of Mathematics</p>
-                </div>
-                
-                <div class="team-box">
-                    <h3>Development Team</h3>
-                    <ul>
-                        <li>Avery Campbell</li>
-                        <li>Gavin McIntosh</li>
-                        <li>Leah Rogers</li>
-                        <li>Melanie Little</li>
-                        <li>Brandon Wyatt</li>
-                    </ul>
+                    <h3>PI & Co-Investigators</h3>
+                    <p><strong>Principal Investigator:</strong><br>Dr. Bryant Wyatt<br>Tarleton State University, Department of Mathematics</p>
+                    <p style="margin-top:15px;"><strong>Co-Investigator:</strong><br>Dr. Charles Puelz<br>University of Houston, Department of Mathematics</p>
                 </div>
 
                 <div class="team-box">
-                    <h3>Clinical Collaborators</h3>
-                    <ul>
-                        <li><strong>Dr. Charles Puelz</strong><br>Baylor College of Medicine</li>
-                        <li><strong>Phil Alcorn</strong><br>Biosense Webster (EP Solutions)</li>
-                        <li><strong>Kyla Moore</strong><br>University of Houston, Mathematics</li>
-                    </ul>
+                    <h3>Collaborators & Team</h3>
+                    <div>
+                        <strong>Tarleton State University (Department of Mathematics):</strong>
+                        <ul>
+                            <li>Mason Bane</li>
+                            <li>Leah Rogers</li>
+                            <li>Kyla Moore</li>
+                            <li>Philip Alcorn</li>
+                            <li>Melanie Little</li>
+                            <li>Avery Campbell</li>
+                            <li>Gavin McIntosh</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <strong>University of North Texas:</strong>
+                        <ul>
+                            <li>Gabriella Williams</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <strong>UNT Health Science Center:</strong>
+                        <ul>
+                            <li>Kinsey Brawner</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <strong>Industry Collaborator:</strong>
+                        <ul>
+                            <li>Brandon Wyatt — Biosense Webster</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div class="team-box">
@@ -316,10 +327,114 @@
                     <a href="https://doi.org/10.1016/j.jelectrocard.2024.153762" target="_blank" class="pub-link">
                         <i class="fas fa-external-link-alt"></i> Read Full Paper (DOI)
                     </a>
+                    <a href="assets/JoEPublication.pdf" target="_blank" class="pub-link">
+                        <i class="fas fa-file-pdf"></i> Full PDF
+                    </a>
                     <a href="https://github.com/TSUParticleModelingGroup/New-Left-Atrium-Model" target="_blank" class="pub-link">
                         <i class="fab fa-github"></i> Code Repository
                     </a>
                 </div>
+            </div>
+        </section>
+
+        <!-- Media Gallery -->
+        <section id="gallery">
+            <h2><i class="fas fa-images"></i> Media Gallery</h2>
+            <p>Scroll through full-size media without squinting. Use the arrows or thumbnails to jump between videos and images; everything plays inline.</p>
+
+            <div class="gallery-viewer">
+                <button class="gallery-nav prev" aria-label="Previous media"><i class="fas fa-chevron-left"></i></button>
+                <div class="gallery-media">
+                    <video id="gallery-video" controls preload="metadata"></video>
+                    <img id="gallery-image" alt="Gallery item" loading="lazy">
+                </div>
+                <div class="gallery-meta">
+                    <h4 id="gallery-title"></h4>
+                    <p id="gallery-desc"></p>
+                </div>
+                <button class="gallery-nav next" aria-label="Next media"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div class="gallery-thumbs" id="gallery-thumbs" aria-label="Gallery thumbnails">
+                <!-- 1D -->
+                <button class="gallery-thumb" data-type="video" data-src="assets/1DBeat.mp4" data-title="1D Strand Beat" data-desc="Baseline conduction along an 11-node strand." data-thumb="assets/1DStrand.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/1DStrand.jpg" alt="1D Strand Beat thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/1DStrand.jpg" data-title="1D Strand" data-desc="Electrical wave progression across the basic strand." data-thumb="assets/1DStrand.jpg">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/1DStrand.jpg" alt="1D Strand thumbnail" loading="lazy">
+                </button>
+
+                <!-- 2D -->
+                <button class="gallery-thumb" data-type="video" data-src="assets/2DBeat.mp4" data-title="2D Ring Beat" data-desc="Coordinated activation around a 2D ring model." data-thumb="assets/2DRingBeat.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/2DRingBeat.jpg" alt="2D Ring Beat thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/2DReentry.mp4" data-title="2D Reentry" data-desc="Induced macro-reentry demonstrating sustained tachycardia." data-thumb="assets/2DRingBeat.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/2DRingBeat.jpg" alt="2D Reentry thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/2DRingBeat.jpg" data-title="2D Ring" data-desc="Ring geometry highlighting circumferential activation." data-thumb="assets/2DRingBeat.jpg">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/2DRingBeat.jpg" alt="2D Ring thumbnail" loading="lazy">
+                </button>
+
+                <!-- 3D -->
+                <button class="gallery-thumb" data-type="video" data-src="assets/3DBeat.mp4" data-title="3D Sphere Beat" data-desc="3D propagation with synchronized contraction." data-thumb="assets/3DSphereBeat.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/3DSphereBeat.jpg" alt="3D Sphere Beat thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/3Dlarger.mp4" data-title="Large 3D Model" data-desc="Higher node-count sphere showcasing stability." data-thumb="assets/3DSphereBeat.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/3DSphereBeat.jpg" alt="Large 3D model thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/3Dmicro.mp4" data-title="3D Micro-Reentry" data-desc="Micro-reentrant behavior captured in 3D." data-thumb="assets/3DSphereBeat.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/3DSphereBeat.jpg" alt="3D Micro-Reentry thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/3DSphereBeat.jpg" data-title="3D Sphere" data-desc="Surface view of synchronized 3D activation." data-thumb="assets/3DSphereBeat.jpg">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/3DSphereBeat.jpg" alt="3D Sphere thumbnail" loading="lazy">
+                </button>
+
+                <!-- Misc / GUI -->
+                <button class="gallery-thumb" data-type="video" data-src="assets/IdealizedBeat.mp4" data-title="Idealized Beat" data-desc="Idealized left atrium pacing with clean conduction." data-thumb="assets/Idealizedgroup.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/Idealizedgroup.jpg" alt="Idealized Beat thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/IdealizedFlutter.mp4" data-title="Idealized Flutter" data-desc="Flutter pathway forming around the pulmonary veins." data-thumb="assets/Idealizedgroup.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/Idealizedgroup.jpg" alt="Idealized Flutter thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/IdealizedPVIFlutter.mp4" data-title="PVI Flutter" data-desc="Post–pulmonary vein isolation dynamics and reentry." data-thumb="assets/Idealizedgroup.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/Idealizedgroup.jpg" alt="PVI Flutter thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/IdealizedAtrialFlutter.mp4" data-title="Atrial Flutter" data-desc="Idealized atrial flutter with macro-reentrant circuit." data-thumb="assets/Idealizedgroup.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/Idealizedgroup.jpg" alt="Atrial Flutter thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="video" data-src="assets/RealLA.mp4" data-title="Patient-Specific LA" data-desc="Patient-derived atrial geometry under pacing." data-thumb="assets/RealLA.jpg">
+                    <span class="thumb-badge">Video</span>
+                    <img src="assets/RealLA.jpg" alt="Patient-specific LA thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/Idealizedgroup.jpg" data-title="Idealized LA" data-desc="Idealized mesh with pulmonary veins and mitral annulus." data-thumb="assets/Idealizedgroup.jpg">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/Idealizedgroup.jpg" alt="Idealized LA thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/RealLA.jpg" data-title="Patient LA" data-desc="Clinical geometry emphasizing pulmonary vein topology." data-thumb="assets/RealLA.jpg">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/RealLA.jpg" alt="Patient LA thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/RoofFlutter.jpeg" data-title="Roof Flutter" data-desc="Roof-dependent flutter circuit illustrating macro-reentry." data-thumb="assets/RoofFlutter.jpeg">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/RoofFlutter.jpeg" alt="Roof Flutter thumbnail" loading="lazy">
+                </button>
+                <button class="gallery-thumb" data-type="image" data-src="assets/GUI.png" data-title="Simulation GUI" data-desc="Interface for pacing, ablation, and recording." data-thumb="assets/GUI.png">
+                    <span class="thumb-badge image">Image</span>
+                    <img src="assets/GUI.png" alt="Simulation GUI thumbnail" loading="lazy">
+                </button>
             </div>
         </section>
     </div>
