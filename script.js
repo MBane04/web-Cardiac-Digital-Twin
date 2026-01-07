@@ -1,3 +1,28 @@
+// Prevent browser from auto-scrolling to hash on page load
+// This runs before any other initialization
+window.history.scrollRestoration = 'manual';
+
+// Remove hash from URL immediately if present
+if (window.location.hash) {
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+}
+
+// Force scroll to top and prevent any auto-scroll attempts
+let scrollBlocked = true;
+window.addEventListener('scroll', function(e) {
+    if (scrollBlocked && window.scrollY > 0) {
+        window.scrollTo(0, 0);
+    }
+}, { passive: false });
+
+// Allow normal scrolling only after page is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    window.scrollTo(0, 0);
+    setTimeout(() => {
+        scrollBlocked = false;
+    }, 100);
+});
+
 // Mobile Menu Toggle
 document.addEventListener('DOMContentLoaded', function() {
     const navToggle = document.getElementById('nav-toggle');
@@ -65,6 +90,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             });
         }
     });
+});
+
+// Prevent browser from auto-scrolling to hash on page load
+// This ensures the page loads at the top, not at the URL hash target
+document.addEventListener('DOMContentLoaded', function() {
+    window.history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
 });
 
 // Add scroll animation to sections
@@ -213,26 +245,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const imgEl = btn.querySelector('img');
 
+            let hasFrame = false;
+
             const onLoadedMeta = () => {
                 const dur = Number.isFinite(thumbVideo.duration) && thumbVideo.duration > 0 ? thumbVideo.duration : 5;
                 const targetTime = Math.min(15, dur);
-                // Some browsers require a tiny play/pause to enable seeking preview frames
-                const seek = () => {
+                
+                // Attempt to play briefly then pause to ensure frame rendering
+                const playAndSeek = () => {
                     try {
                         thumbVideo.currentTime = targetTime;
+                        // Try playing to trigger frame rendering
+                        const playPromise = thumbVideo.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                // Immediately pause after play starts
+                                try { thumbVideo.pause(); } catch (_e) {}
+                                hasFrame = true;
+                                if (imgEl) imgEl.style.display = 'none';
+                            }).catch(err => {
+                                // Autoplay blocked or other error - just use fallback image
+                                console.warn('Video thumbnail autoplay failed:', err);
+                            });
+                        }
                     } catch (_e) {
-                        // Ignore seek errors
+                        // Ignore errors
                     }
                 };
-                // Attempt seek after a rAF to ensure readiness
-                requestAnimationFrame(seek);
+                
+                // Delay slightly to ensure the video is fully ready
+                requestAnimationFrame(() => {
+                    setTimeout(playAndSeek, 50);
+                });
             };
 
             const onSeeked = () => {
-                // Pause to keep frame visible
-                try { thumbVideo.pause(); } catch (_e) {}
-                // Hide the fallback image once we have a frame
-                if (imgEl) imgEl.style.display = 'none';
+                if (!hasFrame) {
+                    hasFrame = true;
+                    try { thumbVideo.pause(); } catch (_e) {}
+                    if (imgEl) imgEl.style.display = 'none';
+                }
             };
 
             thumbVideo.addEventListener('loadedmetadata', onLoadedMeta, { once: true });
@@ -245,13 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.appendChild(thumbVideo);
             }
 
-            // As fallback, if nothing happens within a few seconds, keep image
+            // As fallback, if video doesn't load within 6 seconds, keep image visible
             setTimeout(() => {
-                if (thumbVideo.readyState < 2 && imgEl) {
-                    // Could not load metadata—leave image
-                    thumbVideo.remove();
+                if (!hasFrame && imgEl) {
+                    imgEl.style.display = 'block';
                 }
-            }, 3500);
+            }, 6000);
         });
     })();
 
